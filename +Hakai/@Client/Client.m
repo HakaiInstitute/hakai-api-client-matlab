@@ -11,18 +11,27 @@ classdef Client
     % Constructor
     function obj = Client(val)
        if isempty(val)
-        obj.api_root = "https://hecate.hakai.org/api"
+        obj.api_root = "https://hecate.hakai.org/api";
        else
         obj.api_root = val;
        end
-       obj.authorization_base_url <- sprintf('%s/auth/oauth2', obj.api_root);
-       obj.token_url <- sprintf('%s/auth/oauth2/token', api_root);
+       obj.authorization_base_url = sprintf('%s/auth/oauth2', obj.api_root);
+       obj.token_url = sprintf('%s/auth/oauth2/token', api_root);
+
+       cred = try_to_load_credentials()
+       if(credentials) {
+         obj.credentials = cred;
+       } else {
+         cred = get_credentials_from_web();
+         save_credentials(cred);
+         obj.credentials = cred;
+       }
     end
 
 
     function r = get(obj,endpointUrl)
        % get data from endpointUrl
-       token = sprintf("%s %s", obj.credentials.token_type, obj.credentials.access_token)
+       token = sprintf('%s %s', obj.credentials.token_type, obj.credentials.access_token);
        options = weboptions('Authorization',token);
        data = webread(endpointUrl,options);
 
@@ -30,11 +39,13 @@ classdef Client
        r = jsondecode(data);
     end
 
-    function r = remove_old_credentials(obj)
-       if exist(obj.credentials_file, 'file') == 2
-         delete(obj.credentials_file);
-       end
+  function r = remove_old_credentials(obj)
+    if exist(obj.credentials_file, 'file') == 2
+      r = delete(obj.credentials_file);
+    else
+      r = false;
     end
+  end
 
   end
 
@@ -62,43 +73,43 @@ classdef Client
       res_body = res.parsed;
 
       t = datetime('now');
-      current_time = posixtime(t)
-      credentials = struct(
+      current_time = posixtime(t);
+      cred = struct(
         'access_token', res_body.access_token,
         'token_type', res_body.token_type,
         'expires_in', res_body.expires_in,
         'expires_at', current_time + res_body.expires_in
-      )
+      );
 
-      r = credentials;
+      r = cred;
       return
     end
 
     % Load credential from the credentials_file location
     function r = try_to_load_credentials(obj)
-      if exist(obj.credentials_file, 'file') != 2
+      if exist(obj.credentials_file, 'file') ~= 2
         r = false;
         return
       end
 
       cache = load(obj.credentials_file);
-      api_root = cache.api_root
-      credentials = cache.credentials
+      api_root = cache.api_root;
+      cred = cache.credentials;
 
       % Check api root is the same and that credentials aren't expired
       t = datetime('now');
-      current_time = posixtime(t)
+      current_time = posixtime(t);
       same_root = obj.api_root == api_root;
-      credentials_expired = current_time > credentials.expires_at;
+      credentials_expired = current_time > cred.expires_at;
 
-      if(!same_root || credentials_expired){
+      if ~same_root | credentials_expired
         delete(obj.credentials_file);
         r = false;
         return
-      }
+      end
 
       # If all is well, return the credentials
-      r = credentials;
+      r = cred;
       return
     end
 

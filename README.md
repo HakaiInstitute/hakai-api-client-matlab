@@ -4,29 +4,30 @@
 
 # Installation
 
-Copy client.m into your matlab path or place in the working directory of your project.
+Copy The Hakai package folder and GetFullPath.m into your matlab path or place in the working directory of your project.
 
 # Quickstart
 
 ```matlab
 % Get the api request client
-client = Client()
+client = Hakai.Client();
 
 % Make a data request for sampling stations
-url = '%s/%s' % (client.api_root, 'eims/views/output/chlorophyll?limit=50')
-response = client.get(url)
+url = sprintf('%s/%s',client.api_root,'eims/views/output/chlorophyll?limit=20');
+response = client.get(url);
 
-disp(url) % https://hecate.hakai.org/api/eims/views/output/chlorophyll...
-disp(response) % response will be a matlab object
+disp(url); % https://hecate.hakai.org/api/eims/views/output/chlorophyll...
+disp(response); % response will be a matlab 20x1 struct
+disp(struct2table(response)); % convert struct to a table for easy viewing
 ```
 
 ## Methods
 
-This library exports a single class named `Client`. Instantiating this class sets up the credentials for requests using the `$get` method.
+This library exports the `Hakai` package with a single class named `Client`. Instantiating this class sets up the credentials for requests using the `get` method.
 
 The hakai_api `Client` class also contains a property `api_root` which is useful for constructing urls to access data from the API. The above [Quickstart example](#quickstart) demonstrates using this property to construct a url to access chlorophyll data.
 
-If for some reason your credentials become corrupted and stop working, there is a method to remove the old cached credentials for your account so you can re-authenticate. just do `client.remove_old_credentials()`.
+If for some reason your credentials become corrupted and stop working, there is a method to remove the old cached credentials for your account so you can re-authenticate. Simply call the method like so `client.remove_old_credentials()`.
 
 ## API endpoints
 
@@ -38,7 +39,7 @@ You can specify which API to access when instantiating the Client. By default, t
 
 ```matlab
 % Get a client for a locally running API instance
-client = Client("localhost:8666")
+client = Hakai.Client("localhost:8666")
 disp(client.api_root) % http://localhost:8666
 ```
 

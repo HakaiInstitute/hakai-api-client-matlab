@@ -20,7 +20,7 @@ classdef Client
 
        cred = obj.try_to_load_credentials();
 
-       if cred
+       if isstruct(cred)
          obj.credentials = cred;
        else
          cred = obj.get_credentials_from_web();
@@ -33,19 +33,17 @@ classdef Client
     function r = get(obj,endpointUrl)
        % get data from endpointUrl
        token = sprintf('%s %s', obj.credentials.token_type, obj.credentials.access_token);
-       options = weboptions('Authorization',token);
+       options = weboptions('HeaderFields',{'Authorization' token});
        data = webread(endpointUrl,options);
-
-       %return in approprit format
-       r = jsondecode(data);
+       % webread auto converts json response to matlab struct
+       r = data;
     end
 
     function r = remove_old_credentials(obj)
       if exist(obj.credentials_file, 'file') == 2
-        r = delete(obj.credentials_file);
-      else
-        r = false;
+        delete(obj.credentials_file);
       end
+      r = true;
     end
 
   end

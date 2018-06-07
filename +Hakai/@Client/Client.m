@@ -50,10 +50,10 @@ classdef Client
 
     function r = get_credentials_from_web(obj)
       % Get the user to login and get the oAuth2 code from the redirect url
-      disp("Please go here and authorize:")
-      disp(private$authorization_base_url)
-      redirect_response = input('\nPaste the full redirect URL here:','s')
-      code = regexp(redirect_response, 'code=(.*)$', 'tokens', 'once')
+      disp("Please go here and authorize:");
+      disp(obj.authorization_base_url);
+      redirect_response = input('\nPaste the full redirect URL here:','s');
+      code = regexp(redirect_response, 'code=(.*)$', 'tokens', 'once');
 
       % Exchange the oAuth2 code for a jwt token
       data = struct('code',code);
@@ -85,10 +85,10 @@ classdef Client
       api_root = cache.api_root
       credentials = cache.credentials
 
-      % Check api root is the same and that credentials aren''t expired
+      % Check api root is the same and that credentials aren't expired
       t = datetime('now');
       current_time = posixtime(t)
-      same_root = self$api_root == api_root;
+      same_root = obj.api_root == api_root;
       credentials_expired = current_time > credentials.expires_at;
 
       if(!same_root || credentials_expired){

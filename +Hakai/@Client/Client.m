@@ -10,22 +10,23 @@ classdef Client
 
     % Constructor
     function obj = Client(val)
-       if isempty(val)
+       if nargin == 0
         obj.api_root = "https://hecate.hakai.org/api";
        else
         obj.api_root = val;
        end
        obj.authorization_base_url = sprintf('%s/auth/oauth2', obj.api_root);
-       obj.token_url = sprintf('%s/auth/oauth2/token', api_root);
+       obj.token_url = sprintf('%s/auth/oauth2/token', obj.api_root);
 
-       cred = try_to_load_credentials()
-       if(credentials) {
+       cred = obj.try_to_load_credentials();
+
+       if cred
          obj.credentials = cred;
-       } else {
-         cred = get_credentials_from_web();
-         save_credentials(cred);
+       else
+         cred = obj.get_credentials_from_web();
+         obj.save_credentials(cred);
          obj.credentials = cred;
-       }
+       end
     end
 
 
@@ -39,13 +40,13 @@ classdef Client
        r = jsondecode(data);
     end
 
-  function r = remove_old_credentials(obj)
-    if exist(obj.credentials_file, 'file') == 2
-      r = delete(obj.credentials_file);
-    else
-      r = false;
+    function r = remove_old_credentials(obj)
+      if exist(obj.credentials_file, 'file') == 2
+        r = delete(obj.credentials_file);
+      else
+        r = false;
+      end
     end
-  end
 
   end
 
@@ -54,7 +55,7 @@ classdef Client
     client_id = '289782143400-1f4r7l823cqg8fthd31ch4ug0thpejme.apps.googleusercontent.com';
     authorization_base_url;
     token_url;
-    credentials_file; % = GetFullPath('~/.hakai-api-credentials-r');
+    credentials_file = GetFullPath('~/.hakai-api-credentials-matlab.mat');
   end
 
   methods (Access = private)
@@ -67,19 +68,16 @@ classdef Client
       code = regexp(redirect_response, 'code=(.*)$', 'tokens', 'once');
 
       % Exchange the oAuth2 code for a jwt token
-      data = struct('code',code);
+      data = jsonencode(struct('code',code));
       options = weboptions('MediaType','application/json');
       res = webwrite(obj.token_url,data,options);
-      res_body = res.parsed;
 
       t = datetime('now');
       current_time = posixtime(t);
-      cred = struct(
-        'access_token', res_body.access_token,
-        'token_type', res_body.token_type,
-        'expires_in', res_body.expires_in,
-        'expires_at', current_time + res_body.expires_in
-      );
+      cred.access_token = res.access_token;
+      cred.token_type = res.token_type;
+      cred.expires_in = res.expires_in;
+      cred.expires_at = current_time + res.expires_in;
 
       r = cred;
       return
@@ -93,37 +91,32 @@ classdef Client
       end
 
       cache = load(obj.credentials_file);
-      api_root = cache.api_root;
+      root = cache.api_root;
       cred = cache.credentials;
 
       % Check api root is the same and that credentials aren't expired
       t = datetime('now');
       current_time = posixtime(t);
-      same_root = obj.api_root == api_root;
+      same_root = obj.api_root == root;
       credentials_expired = current_time > cred.expires_at;
 
-      if ~same_root | credentials_expired
+      if ~same_root || credentials_expired
         delete(obj.credentials_file);
         r = false;
         return
       end
 
-      # If all is well, return the credentials
+      % If all is well, return the credentials
       r = cred;
       return
     end
 
     % Save the credentials to the credentials_file location
     function r = save_credentials(obj, cred)
-      cache = struct(
-        'api_root', obj.api_root,
-        'credentials', cred
-      );
-      save(obj.credentials_file, '-struct', cache);
-
-      %fileID = fopen(obj.credentials_file,'w');
-      %fprintf(fileID,'%s',cache);
-      %fclose(fileID);
+      cache.api_root = obj.api_root;
+      cache.credentials = cred;
+      % Save the fields of structure cache as individual variables
+      save(obj.credentials_file, '-struct', 'cache')
     end
 
   end

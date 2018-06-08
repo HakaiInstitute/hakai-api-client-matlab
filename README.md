@@ -4,7 +4,7 @@
 
 # Installation
 
-Copy The Hakai package folder and GetFullPath.m into your matlab path or place in the working directory of your project.
+Copy The Hakai package folder into your matlab path or place in the working directory of your project.
 
 # Quickstart
 

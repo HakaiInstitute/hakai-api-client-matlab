@@ -18,6 +18,13 @@ classdef Client
        obj.authorization_base_url = sprintf('%s/auth/oauth2', obj.api_root);
        obj.token_url = sprintf('%s/auth/oauth2/token', obj.api_root);
 
+       if ispc
+         userdir= getenv('USERPROFILE');
+       else
+         userdir= getenv('HOME');
+       end
+       obj.credentials_file = fullfile(userdir, '.hakai-api-credentials-matlab.mat');
+
        cred = obj.try_to_load_credentials();
 
        if isstruct(cred)
@@ -53,7 +60,7 @@ classdef Client
     ***REMOVED***
     authorization_base_url;
     token_url;
-    credentials_file = GetFullPath('~/.hakai-api-credentials-matlab.mat');
+    credentials_file;
   end
 
   methods (Access = private)

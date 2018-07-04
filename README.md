@@ -39,7 +39,7 @@ You can specify which API to access when instantiating the Client. By default, t
 
 ```matlab
 % Get a client for a locally running API instance
-client = Hakai.Client("localhost:8666")
+client = Hakai.Client("http://localhost:8666")
 disp(client.api_root) % http://localhost:8666
 ```
 

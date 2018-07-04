@@ -40,7 +40,7 @@ classdef Client
     function r = get(obj,endpointUrl)
        % get data from endpointUrl
        token = sprintf('%s %s', obj.credentials.token_type, obj.credentials.access_token);
-       options = weboptions('HeaderFields',{'Authorization' token});
+       options = weboptions('HeaderFields',{'Authorization' token},'Timeout', 120);
        data = webread(endpointUrl,options);
        % webread auto converts json response to matlab struct
        r = data;

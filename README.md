@@ -4,7 +4,8 @@
 
 # Installation
 
-Copy The Hakai package folder into your matlab path or place in the working directory of your project.
+Copy The Hakai package folder into your matlab path with or place in the working directory of your project.
+'addpath('[path-to-directory]/hakai-api-client-matlab');' adds the package +Hakai to your script.
 
 # Quickstart
 

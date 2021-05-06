@@ -15,7 +15,7 @@ classdef Client
        else
         obj.api_root = val;
        end
-       obj.authorization_base_url = sprintf('%s-client-login', obj.api_root);
+       obj.authorization_base_url = "https://hecate.hakai.org/api-client-login";
        obj.token_url = sprintf('%s/auth/oauth2/token', obj.api_root);
 
        if ispc

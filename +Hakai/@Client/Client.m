@@ -70,12 +70,17 @@ classdef Client
       disp("Please go here and authorize:");
       disp(obj.authorization_base_url);
       res = input('\nCopy and past your credentials from the login page:\n','s');
+
+      % Convert string to struct with field names and values
       keyVals = strsplit(res, '&');
       credentialsStruct = struct();
       for index = 1:size(keyVals,2)
           pair = strsplit(keyVals{index},'=');
           credentialsStruct.(string(pair(1))) = string(pair(2));
       end
+
+      % expires_at should be double to compare to posixtime
+      credentialsStruct.expires_at = str2double(credentialsStruct.expires_at);
 
       r = credentialsStruct;
       return

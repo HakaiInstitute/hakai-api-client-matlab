@@ -94,16 +94,14 @@ classdef Client
       end
 
       cache = load(obj.credentials_file);
-      root = cache.api_root;
       cred = cache.credentials;
 
       % Check api root is the same and that credentials aren't expired
       t = datetime('now');
       current_time = posixtime(t);
-      same_root = obj.api_root == root;
       credentials_expired = current_time > cred.expires_at;
 
-      if ~same_root || credentials_expired
+      if credentials_expired
         delete(obj.credentials_file);
         r = false;
         return

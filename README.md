@@ -5,7 +5,10 @@
 # Installation
 
 Copy The Hakai package folder into your matlab path with or place in the working directory of your project.
-'addpath('[path-to-directory]/hakai-api-client-matlab');' adds the package +Hakai to your script.
+```matlab
+% Add package +Hakai to your script
+addpath('[path-to-directory]/hakai-api-client-matlab');
+```
 
 # Quickstart
 
@@ -38,10 +41,28 @@ For details about the API, including available endpoints where data can be reque
 
 You can specify which API to access when instantiating the Client. By default, the API uses `https://hecate.hakai.org/api` as the API root. It may be useful to use this library to access a locally running API instance or to access the Goose API for testing purposes.
 
+Goose and Hecate use the same tokens, so you can either instantiate the client using Goose as the API root, or use Goose when making the requests.
+
 ```matlab
-% Get a client for a locally running API instance
-client = Hakai.Client("http://localhost:8666")
-disp(client.api_root) % http://localhost:8666
+% Get a client for Goose and make requests as usual
+client = Hakai.Client('https://goose.hakai.org/api')
+disp(client.api_root) % https://goose.hakai.org/api
+url = sprintf('%s/%s',client.api_root,'eims/views/output/chlorophyll?limit=20');
+response = client.get(url);
+
+% Use Hecate client to access Goose
+client = Hakai.Client();
+disp(client.api_root) % https://hecate.hakai.org/api
+url = sprintf('%s/%s','https://goose.hakai.org/api','eims/views/output/chlorophyll?limit=20');
+response = client.get(url);
+```
+
+You won't be able to create a localhost token, but you can instantiate a Goose or Hecate client and then use it to query a locally running API instance that has local auth disabled.
+
+```matlab
+% Use Hecate client to query locally running API instance
+client = Hakai.Client();
+url = sprintf('%s/%s','http://localhost:8666','eims/views/output/chlorophyll?limit=20');
 ```
 
 ### Author

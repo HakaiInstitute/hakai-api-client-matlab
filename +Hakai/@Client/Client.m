@@ -15,7 +15,7 @@ classdef Client
        else
         obj.api_root = val;
        end
-       obj.authorization_base_url = sprintf('%s/auth/oauth2', obj.api_root);
+       obj.authorization_base_url = "https://hecate.hakai.org/api-client-login";
        obj.token_url = sprintf('%s/auth/oauth2/token', obj.api_root);
 
        if ispc
@@ -69,22 +69,20 @@ classdef Client
       % Get the user to login and get the oAuth2 code from the redirect url
       disp("Please go here and authorize:");
       disp(obj.authorization_base_url);
-      redirect_response = input('\nPaste the full redirect URL here:','s');
-      code = regexp(redirect_response, 'code=(.*)$', 'tokens', 'once');
+      res = input('\nCopy and past your credentials from the login page:\n','s');
 
-      % Exchange the oAuth2 code for a jwt token
-      data = jsonencode(struct('code',code));
-      options = weboptions('MediaType','application/json');
-      res = webwrite(obj.token_url,data,options);
+      % Convert string to struct with field names and values
+      keyVals = strsplit(res, '&');
+      credentialsStruct = struct();
+      for index = 1:size(keyVals,2)
+          pair = strsplit(keyVals{index},'=');
+          credentialsStruct.(string(pair(1))) = string(pair(2));
+      end
 
-      t = datetime('now');
-      current_time = posixtime(t);
-      cred.access_token = res.access_token;
-      cred.token_type = res.token_type;
-      cred.expires_in = res.expires_in;
-      cred.expires_at = current_time + res.expires_in;
+      % expires_at should be double to compare to posixtime
+      credentialsStruct.expires_at = str2double(credentialsStruct.expires_at);
 
-      r = cred;
+      r = credentialsStruct;
       return
     end
 
@@ -96,16 +94,14 @@ classdef Client
       end
 
       cache = load(obj.credentials_file);
-      root = cache.api_root;
       cred = cache.credentials;
 
       % Check api root is the same and that credentials aren't expired
       t = datetime('now');
       current_time = posixtime(t);
-      same_root = obj.api_root == root;
       credentials_expired = current_time > cred.expires_at;
 
-      if ~same_root || credentials_expired
+      if credentials_expired
         delete(obj.credentials_file);
         r = false;
         return

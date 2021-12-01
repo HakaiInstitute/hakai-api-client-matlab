@@ -45,6 +45,15 @@ classdef Client
        % webread auto converts json response to matlab struct
        r = data;
     end
+    
+    
+    function response = post(obj,endpointUrl,data)
+       % post data through endpointUrl
+       token = sprintf('%s %s', obj.credentials.token_type, obj.credentials.access_token);
+       options = weboptions('HeaderFields',{'Authorization' token},'Timeout', 120);
+       response = webwrite(endpointUrl,data,options);
+    end
+    
 
     function r = remove_old_credentials(obj)
       if exist(obj.credentials_file, 'file') == 2

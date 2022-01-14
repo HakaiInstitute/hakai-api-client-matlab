@@ -27,7 +27,7 @@ disp(struct2table(response)); % convert struct to a table for easy viewing
 
 ## Methods
 
-This library exports the `Hakai` package with a single class named `Client`. Instantiating this class sets up the credentials for requests using the `get` method.
+This library exports the `Hakai` package with a single class named `Client`. Instantiating this class sets up the credentials for requests using the `get` or `post` methods.
 
 The hakai_api `Client` class also contains a property `api_root` which is useful for constructing urls to access data from the API. The above [Quickstart example](#quickstart) demonstrates using this property to construct a url to access chlorophyll data.
 
@@ -63,6 +63,24 @@ You won't be able to create a localhost token, but you can instantiate a Goose o
 % Use Hecate client to query locally running API instance
 client = Hakai.Client();
 url = sprintf('%s/%s','http://localhost:8666','eims/views/output/chlorophyll?limit=20');
+```
+To post data method can be used to send data back to the Hakai api via MatLab through a specific endpoint. The post method also accept optional [weboptions](https://www.mathworks.com/help/matlab/ref/weboptions.html) inputs to define the format of the output sent.
+
+```matlab
+client = Hakai.Client();
+
+# Load file in memory
+fid = fopen(path_to_pdf,'rb');
+pdf_data = char(fread(fid)');
+fclose(fid);
+
+url = sprintf('%s/ctd/process/rbr/s3/2_Processed_%d',client.api_root,meta.ctd_cast_pk);
+
+response = client.post(url, pdf_data,...
+    'MediaType', 'application/octet-stream',...
+    'CharacterEncoding','ISO-8859-1',...
+    'ContentType', 'raw'...
+);
 ```
 
 ### Author

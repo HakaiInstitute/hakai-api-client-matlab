@@ -45,6 +45,35 @@ classdef Client
        % webread auto converts json response to matlab struct
        r = data;
     end
+    
+    
+    function response = post(obj,endpointUrl,data,varargin)
+       % post(endpointUrl,data,varargin(ex: option key, option value,...)) 
+       % use inputs
+       %    endpoint= Hakai Endpoint
+       %    data = data to post
+       %    varargin (optional): weboption extra output to add when using
+       %                webwrite. Give pair: option key, option value ... 
+       % Use example format:
+       %        response = client.post(url, pdf_data,...
+       %             'MediaType', 'application/octet-stream',...
+       %             'CharacterEncoding','ISO-8859-1',...
+       %             'ContentType', 'raw'...
+       %         );
+            
+       token = sprintf('%s %s', obj.credentials.token_type, obj.credentials.access_token);
+       options = weboptions('HeaderFields',{'Authorization' token},'Timeout', 120);
+       
+       % Add options input from varargin
+       if exist('varargin','var')
+           for id=1:floor(length(varargin)/2)
+               options.(varargin{id*2-1}) = varargin{2*id};
+           end
+       end
+        
+       response = webwrite(endpointUrl,data,options);
+    end
+    
 
     function r = remove_old_credentials(obj)
       if exist(obj.credentials_file, 'file') == 2

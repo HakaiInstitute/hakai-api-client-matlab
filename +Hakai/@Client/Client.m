@@ -86,7 +86,6 @@ classdef Client
 
 % ============= Private =============
   properties (Access = private)
-    client_id = '289782143400-1f4r7l823cqg8fthd31ch4ug0thpejme.apps.googleusercontent.com';
     authorization_base_url;
     token_url;
     credentials_file;

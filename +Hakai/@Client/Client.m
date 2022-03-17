@@ -86,7 +86,6 @@ classdef Client
 
 % ============= Private =============
   properties (Access = private)
-    ***REMOVED***
     authorization_base_url;
     token_url;
     credentials_file;

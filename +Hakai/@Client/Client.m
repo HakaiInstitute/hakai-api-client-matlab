@@ -29,6 +29,8 @@ classdef Client
 
        if isstruct(cred)
          obj.credentials = cred;
+       elseif batchStartupOptionUsed
+           error('Credentials expired or not available!')
        else
          cred = obj.get_credentials_from_web();
          obj.save_credentials(cred);

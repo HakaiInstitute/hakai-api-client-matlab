@@ -3,12 +3,12 @@
 # Requirements
 
 # Installation
-Clone this repo to your the machine running matlab. This can be your local machine or a server.
+Clone this repo to the machine running Matlab. This can be your local machine or a server.
 ```
 cd ~
 git clone https://github.com/HakaiInstitute/hakai-api-client-matlab.git
 ```
-Copy The Hakai package folder into your matlab path with or place in the working directory of your project.
+Copy The Hakai package folder into your Matlab path or place it in the working directory of your project.
 ```matlab
 % Add package +Hakai to your script
 addpath('[path-to-directory]/hakai-api-client-matlab');

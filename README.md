@@ -1,8 +1,6 @@
 # Hakai Api Matlab Client
 
-# Requirements
-
-# Installation
+# How to install this code
 Clone this repo to the machine running Matlab. This can be your local machine or a server.
 ```
 cd ~
@@ -14,7 +12,7 @@ Copy The Hakai package folder into your Matlab path or place it in the working d
 addpath('[path-to-directory]/hakai-api-client-matlab');
 ```
 
-# Quickstart
+# How to run/deploy this code
 
 ```matlab
 % Get the api request client
@@ -28,6 +26,11 @@ disp(url); % https://hecate.hakai.org/api/eims/views/output/chlorophyll...
 disp(response); % response will be a matlab 20x1 struct
 disp(struct2table(response)); % convert struct to a table for easy viewing
 ```
+
+# The URL where this code is deployed
+    On local user machines, likely not everywhere.
+    
+# Usage
 
 ## Methods
 

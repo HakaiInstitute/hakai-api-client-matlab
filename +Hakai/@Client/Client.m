@@ -11,11 +11,11 @@ classdef Client
     % Constructor
     function obj = Client(val, token)
        if nargin == 0
-        obj.api_root = "https://hecate.hakai.org/api";
+        obj.api_root = "https://portal.hakai.org/api";
        else
         obj.api_root = val;
        end
-       obj.authorization_base_url = "https://hecate.hakai.org/api-client-login";
+       obj.authorization_base_url = "https://portal.hakai.org/api-client-login";
        obj.token_url = sprintf('%s/auth/oauth2/token', obj.api_root);
 
        if ispc

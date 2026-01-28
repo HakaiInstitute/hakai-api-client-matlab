@@ -22,7 +22,7 @@ client = Hakai.Client();
 url = sprintf('%s/%s',client.api_root,'eims/views/output/chlorophyll?limit=20');
 response = client.get(url);
 
-disp(url); % https://hecate.hakai.org/api/eims/views/output/chlorophyll...
+disp(url); % https://portal.hakai.org/api/eims/views/output/chlorophyll...
 disp(response); % response will be a matlab 20x1 struct
 disp(struct2table(response)); % convert struct to a table for easy viewing
 ```
@@ -46,21 +46,21 @@ For details about the API, including available endpoints where data can be reque
 
 ## Advanced usage
 
-You can specify which API to access when instantiating the Client. By default, the API uses `https://hecate.hakai.org/api` as the API root. It may be useful to use this library to access a locally running API instance or to access the Goose API for testing purposes.
+You can specify which API to access when instantiating the Client. By default, the API uses `https://portal.hakai.org/api` as the API root. It may be useful to use this library to access a locally running API instance or to access the Goose API for testing purposes.
 
 Goose and Hecate use the same tokens, so you can either instantiate the client using Goose as the API root, or use Goose when making the requests.
 
 ```matlab
 % Get a client for Goose and make requests as usual
-client = Hakai.Client('https://goose.hakai.org/api')
-disp(client.api_root) % https://goose.hakai.org/api
+client = Hakai.Client('https://portaldev.hakai.org/api')
+disp(client.api_root) % https://portaldev.hakai.org/api
 url = sprintf('%s/%s',client.api_root,'eims/views/output/chlorophyll?limit=20');
 response = client.get(url);
 
 % Use Hecate client to access Goose
 client = Hakai.Client();
-disp(client.api_root) % https://hecate.hakai.org/api
-url = sprintf('%s/%s','https://goose.hakai.org/api','eims/views/output/chlorophyll?limit=20');
+disp(client.api_root) % https://portal.hakai.org/api
+url = sprintf('%s/%s','https://portaldev.hakai.org/api','eims/views/output/chlorophyll?limit=20');
 response = client.get(url);
 ```
 
